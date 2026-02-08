@@ -1,0 +1,19 @@
+{
+  "name": "notes-organizer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo for personal notes organizer application",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

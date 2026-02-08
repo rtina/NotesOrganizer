@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum NoteVisibility {
+  PRIVATE
+  PUBLIC
+  UNLISTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  notes        Note[]
+  files        File[]
+}
+
+model Note {
+  id          String         @id @default(cuid())
+  userId      String
+  title       String
+  content     String
+  visibility  NoteVisibility @default(PRIVATE)
+  slug        String?        @unique
+  shareToken  String?        @unique
+  dayKey      String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user        User           @relation(fields: [userId], references: [id])
+  files       File[]
+}
+
+model File {
+  id        String   @id @default(cuid())
+  userId    String
+  noteId    String?
+
+  provider  String
+  key       String
+  url       String?
+  fileName  String
+  mimeType  String
+  size      Int
+
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  note      Note?    @relation(fields: [noteId], references: [id])
+}
