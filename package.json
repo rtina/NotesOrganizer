@@ -4,13 +4,14 @@
   "version": "1.0.0",
   "description": "Monorepo for personal notes organizer application",
   "workspaces": [
-    "apps/*",
+    "application/*",
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev --workspace=apps/api",
-    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=application/api",
+    "dev:web": "npm run dev --workspace=application/web",
     "build": "npm run build --workspaces",
+    "build:api": "npm run build --workspace=packages/shared && npm run build --workspace=application/api",
     "lint": "npm run lint --workspaces"
   },
   "keywords": [],
