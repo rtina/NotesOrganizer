@@ -16,42 +16,33 @@ export default function Navbar() {
       const res = await getMe();
       setEmail(res.user.email);
       setLoggedIn(true);
-      localStorage.setItem("isAuthed", "1");
     } catch {
       setEmail(null);
-      const cached = localStorage.getItem("isAuthed") === "1";
-      setLoggedIn(cached);
+      setLoggedIn(false);
     }
   }
 
   useEffect(() => {
-    const cached = localStorage.getItem("isAuthed") === "1";
-    if (cached) setLoggedIn(true);
     load();
     function handleAuthChanged() {
       load();
     }
 
-    function handleStorage(e: StorageEvent) {
-      if (e.key === "isAuthed") {
-        load();
-      }
-    }
-
     window.addEventListener("auth:changed", handleAuthChanged as EventListener);
-    window.addEventListener("storage", handleStorage);
 
     return () => {
       window.removeEventListener("auth:changed", handleAuthChanged as EventListener);
-      window.removeEventListener("storage", handleStorage);
     };
   }, []);
 
   async function doLogout() {
-    await logout();
     setEmail(null);
     setLoggedIn(false);
-    localStorage.removeItem("isAuthed");
+    try {
+      await logout();
+    } catch {
+      // Keep UI logged out even if remote logout fails.
+    }
     window.dispatchEvent(new Event("auth:changed"));
     router.push("/notes/login");
     router.refresh();
