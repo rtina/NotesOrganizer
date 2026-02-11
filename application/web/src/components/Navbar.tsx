@@ -10,7 +10,6 @@ export default function Navbar() {
   const router = useRouter();
   const [email, setEmail] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   async function load() {
     try {
@@ -22,8 +21,6 @@ export default function Navbar() {
       setEmail(null);
       const cached = localStorage.getItem("isAuthed") === "1";
       setLoggedIn(cached);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -80,7 +77,7 @@ export default function Navbar() {
 
           <ThemeToggle />
 
-          {loading ? null : loggedIn || email ? (
+          {loggedIn || email ? (
             <>
               <span className="text-sm text-muted hidden sm:inline">{email}</span>
               <button className="btn text-sm" onClick={doLogout}>
