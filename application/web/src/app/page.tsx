@@ -7,7 +7,7 @@ export default function HomePage() {
         <div className="hero-grid">
           <div className="space-y-4">
             <span className="badge">Private by default</span>
-            <h1 className="hero-title">Tina's Notes Organizer</h1>
+            <h1 className="hero-title"> Notes Organizer</h1>
             <p className="hero-subtitle">
               Capture daily work notes, attach documents, and share selected notes with public or unlisted links.
             </p>
