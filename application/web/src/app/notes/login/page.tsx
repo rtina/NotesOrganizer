@@ -16,7 +16,6 @@ export default function LoginPage() {
     setErr(null);
     try {
       await login(email, password);
-      localStorage.setItem("isAuthed", "1");
       window.dispatchEvent(new Event("auth:changed"));
       router.push("/notes");
       router.refresh();

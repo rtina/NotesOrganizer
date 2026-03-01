@@ -32,6 +32,7 @@ export default function NoteDetailPage() {
 
   const [note, setNote] = useState<Note | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
 
   const publicUrl = useMemo(() => {
     if (!note?.slug) return null;
@@ -112,7 +113,49 @@ export default function NoteDetailPage() {
         onChange={changeVisibility}
       />
 
-      <NoteEditor title={note.title} content={note.content} onSave={save} />
+      {editing ? (
+        <NoteEditor
+          title={note.title}
+          content={note.content}
+          onSave={async (next) => {
+            await save(next);
+            setEditing(false);
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <section className="card note-view">
+          <div className="note-view-header">
+            <div>
+              <h1 className="note-view-title">
+                {note.title && note.title.trim() ? note.title : "Untitled note"}
+              </h1>
+              <div className="note-view-meta">
+                <span>{note.dayKey}</span>
+                <span>•</span>
+                <span className="badge">{note.visibility}</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn text-sm"
+              onClick={() => setEditing(true)}
+            >
+              Edit note
+            </button>
+          </div>
+
+          <div className="note-content">
+            {note.content && note.content.trim() ? (
+              note.content
+            ) : (
+              <span className="text-muted">
+                No content yet. Click &ldquo;Edit note&rdquo; to start writing.
+              </span>
+            )}
+          </div>
+        </section>
+      )}
 
       <FileUploader noteId={note.id} files={note.files} onUploaded={load} />
     </main>

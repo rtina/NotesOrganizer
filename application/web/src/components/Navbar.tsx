@@ -4,21 +4,24 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { getMe, logout } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
+type AuthState = "guest" | "authenticated";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const [email, setEmail] = useState<string | null>(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [authState, setAuthState] = useState<AuthState>("guest");
 
   async function load() {
     try {
       const res = await getMe();
       setEmail(res.user.email);
-      setLoggedIn(true);
+      setAuthState("authenticated");
     } catch {
       setEmail(null);
-      setLoggedIn(false);
+      setAuthState("guest");
     }
   }
 
@@ -33,11 +36,11 @@ export default function Navbar() {
     return () => {
       window.removeEventListener("auth:changed", handleAuthChanged as EventListener);
     };
-  }, []);
+  }, [pathname]);
 
   async function doLogout() {
     setEmail(null);
-    setLoggedIn(false);
+    setAuthState("guest");
     try {
       await logout();
     } catch {
@@ -50,25 +53,27 @@ export default function Navbar() {
 
   return (
     <header className="site-header">
-      <div className="container flex items-center justify-between gap-3">
+      <div className="container site-header-inner">
         <Link href="/" className="brand-pill">
           Notes Organizer
         </Link>
 
-        <nav className="toolbar">
+        <nav className="toolbar site-nav">
           <Link className="btn-ghost text-sm" href="/">
             Profile
           </Link>
-          <Link className="btn-outline text-sm" href="/notes">
-            Notes
-          </Link>
+          {authState === "authenticated" ? (
+            <Link className="btn-outline text-sm" href="/notes">
+              Notes
+            </Link>
+          ) : null}
           <Link className="btn-outline text-sm" href="/public">
             Public
           </Link>
 
           <ThemeToggle />
 
-          {loggedIn || email ? (
+          {authState === "authenticated" ? (
             <>
               <span className="text-sm text-muted hidden sm:inline">{email}</span>
               <button className="btn text-sm" onClick={doLogout}>

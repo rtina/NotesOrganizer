@@ -17,7 +17,6 @@ export default function RegisterPage() {
     try {
       await register(email, password);
       await login(email, password);
-      localStorage.setItem("isAuthed", "1");
       window.dispatchEvent(new Event("auth:changed"));
       router.push("/notes");
       router.refresh();

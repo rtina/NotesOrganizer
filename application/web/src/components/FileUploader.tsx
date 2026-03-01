@@ -90,7 +90,7 @@ export default function FileUploader({
                 <div className="truncate font-medium">{f.fileName}</div>
                 <div className="text-xs text-muted">{f.mimeType}</div>
               </div>
-              <div className="flex items-center gap-5">
+              <div className="file-row-actions flex items-center gap-3">
                 <button className="btn-outline text-sm" onClick={() => previewFile(f)}>
                   Preview
                 </button>
