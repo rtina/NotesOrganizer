@@ -79,8 +79,9 @@ export async function me(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function logout(_req: Request, res: Response) {
-  res.clearCookie("access_token", { path: "/" });
-  res.clearCookie("refresh_token", { path: "/" });
+  // Must use the same options as setCookie (path, sameSite, secure) or the browser won't clear the cookie (breaks in production).
+  res.clearCookie("access_token", cookieOptions());
+  res.clearCookie("refresh_token", cookieOptions());
   res.json({ ok: true });
 }
 
