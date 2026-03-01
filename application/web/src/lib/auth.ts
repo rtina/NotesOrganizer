@@ -15,5 +15,5 @@ export async function register(email: string, password: string) {
 }
 
 export async function logout() {
-  return api("/auth/logout", { method: "POST" });
+  return api("/auth/logout", { method: "POST", cache: "no-store" });
 }

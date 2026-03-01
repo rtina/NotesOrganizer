@@ -80,8 +80,12 @@ export async function me(req: Request, res: Response, next: NextFunction) {
 
 export async function logout(_req: Request, res: Response) {
   // Must use the same options as setCookie (path, sameSite, secure) or the browser won't clear the cookie (breaks in production).
-  res.clearCookie("access_token", cookieOptions());
-  res.clearCookie("refresh_token", cookieOptions());
+  const opts = { ...cookieOptions(), maxAge: 0 };
+  res.clearCookie("access_token", opts);
+  res.clearCookie("refresh_token", opts);
+  // Backup for browsers that support it (Chrome, etc.) so cookies are cleared even if Set-Cookie clear is ignored (e.g. cross-origin).
+  res.setHeader("Clear-Site-Data", '"cookies"');
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
   res.json({ ok: true });
 }
 

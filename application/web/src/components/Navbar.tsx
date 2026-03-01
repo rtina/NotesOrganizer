@@ -1,20 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { getMe, logout } from "@/lib/auth";
 import { usePathname, useRouter } from "next/navigation";
 
 type AuthState = "guest" | "authenticated";
 
+const LOGOUT_COOLDOWN_MS = 3000;
+
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [email, setEmail] = useState<string | null>(null);
   const [authState, setAuthState] = useState<AuthState>("guest");
+  const justLoggedOutRef = useRef(false);
 
   async function load() {
+    if (justLoggedOutRef.current) {
+      setEmail(null);
+      setAuthState("guest");
+      return;
+    }
     try {
       const res = await getMe();
       setEmail(res.user.email);
@@ -39,6 +47,7 @@ export default function Navbar() {
   }, [pathname]);
 
   async function doLogout() {
+    justLoggedOutRef.current = true;
     setEmail(null);
     setAuthState("guest");
     try {
@@ -49,6 +58,9 @@ export default function Navbar() {
     window.dispatchEvent(new Event("auth:changed"));
     router.push("/notes/login");
     router.refresh();
+    window.setTimeout(() => {
+      justLoggedOutRef.current = false;
+    }, LOGOUT_COOLDOWN_MS);
   }
 
   return (
